@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#080d18">
+  <meta name="description" content="PluginPlus — a fully customizable Egyptian-inspired header card for BetterDiscord.">
+  <title>PluginPlus — Bring Ancient Egypt to Discord</title>
+  <style>
+    :root {
+      --bg: #070b14;
+      --panel: rgba(15, 24, 40, .78);
+      --panel-strong: #101a2b;
+      --gold: #d7ad63;
+      --gold-bright: #f1d49a;
+      --blue: #53baff;
+      --text: #f4f0e8;
+      --muted: #a5afbf;
+      --line: rgba(215, 173, 99, .22);
+      --radius: 22px;
+      --max: 1120px;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0; color: var(--text); background:
+        radial-gradient(ellipse at 50% -15%, rgba(37, 111, 157, .25), transparent 48%),
+        radial-gradient(ellipse at 100% 45%, rgba(166, 117, 48, .10), transparent 34%),
+        linear-gradient(180deg, #080e1a 0%, #070b14 60%, #090e18 100%);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.6; overflow-x: hidden;
+    }
+    body::before {
+      content: ""; position: fixed; inset: 0; pointer-events: none; opacity: .16; z-index: -1;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23c69b55' stroke-opacity='.35' stroke-width='1'%3E%3Cpath d='M20 20h22v22H20zM138 138h22v22h-22zM90 10v22m-11-11h22M90 148v22m-11-11h22M10 90h22m-11-11v22M148 90h22m-11-11v22'/%3E%3C/g%3E%3C/svg%3E");
+      background-size: 180px;
+    }
+    a { color: inherit; text-decoration: none; }
+    button { font: inherit; }
+    .wrap { width: min(var(--max), calc(100% - 40px)); margin: auto; }
+    .topbar {
+      position: sticky; top: 0; z-index: 20; backdrop-filter: blur(18px);
+      background: rgba(7, 11, 20, .78); border-bottom: 1px solid rgba(255,255,255,.06);
+    }
+    .nav { min-height: 76px; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+    .brand { display: flex; align-items: center; gap: 12px; font-weight: 850; letter-spacing: .12em; }
+    .brand-mark {
+      width: 38px; height: 38px; display: grid; place-items: center; border: 1px solid var(--gold);
+      color: var(--gold-bright); border-radius: 12px; font-size: 21px; box-shadow: 0 0 24px rgba(215,173,99,.13);
+    }
+    .brand span:last-child { font-size: 15px; }
+    .nav-links { display: flex; align-items: center; gap: 28px; color: var(--muted); font-size: 13px; font-weight: 650; }
+    .nav-links a:hover { color: var(--gold-bright); }
+    .nav-cta, .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 9px; border-radius: 999px;
+      padding: 12px 20px; font-size: 13px; font-weight: 800; transition: .2s ease; cursor: pointer;
+    }
+    .nav-cta, .btn-primary { color: #17120a; background: linear-gradient(135deg, #f1d49a, #c39249); box-shadow: 0 8px 30px rgba(197,147,73,.18); }
+    .nav-cta:hover, .btn-primary:hover { transform: translateY(-2px); filter: brightness(1.08); }
+    .menu-toggle { display: none; border: 1px solid var(--line); background: transparent; color: var(--text); border-radius: 10px; padding: 8px 11px; }
+    .hero { position: relative; padding: 104px 0 82px; text-align: center; }
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 9px; padding: 7px 13px; border: 1px solid var(--line);
+      border-radius: 999px; color: var(--gold-bright); background: rgba(215,173,99,.06);
+      text-transform: uppercase; letter-spacing: .16em; font-size: 10px; font-weight: 800;
+    }
+    .eyebrow::before, .eyebrow::after { content: "✦"; color: var(--blue); font-size: 10px; }
+    h1 { max-width: 900px; margin: 25px auto 18px; font-size: clamp(44px, 8vw, 82px); line-height: .99; letter-spacing: -.055em; }
+    h1 .gold { color: var(--gold-bright); text-shadow: 0 0 35px rgba(215,173,99,.16); }
+    .hero p { max-width: 650px; margin: 0 auto; color: var(--muted); font-size: clamp(15px, 2vw, 18px); }
+    .hero-actions { display: flex; justify-content: center; flex-wrap: wrap; gap: 12px; margin-top: 30px; }
+    .btn-secondary { border: 1px solid rgba(180,198,219,.2); background: rgba(255,255,255,.035); color: var(--text); }
+    .btn-secondary:hover { border-color: var(--blue); color: #c9eaff; transform: translateY(-2px); }
+    .hero-art { max-width: 850px; margin: 64px auto 0; position: relative; }
+    .ornament { position: absolute; inset: -22px; border: 1px solid rgba(215,173,99,.15); border-radius: 28px; pointer-events: none; }
+    .ornament::before, .ornament::after { content: "𓂀"; position: absolute; top: -17px; color: var(--gold); background: #080e19; padding: 0 12px; font-size: 22px; }
+    .ornament::before { left: 28px; } .ornament::after { right: 28px; }
+    .preview {
+      position: relative; overflow: hidden; text-align: left; border: 1px solid rgba(215,173,99,.35);
+      border-radius: 22px; padding: 22px; background:
+        radial-gradient(circle at 90% 0%, rgba(44,151,214,.22), transparent 32%),
+        linear-gradient(135deg, rgba(20,34,54,.97), rgba(8,14,25,.98));
+      box-shadow: 0 30px 90px rgba(0,0,0,.48), inset 0 1px rgba(255,255,255,.07);
+    }
+    .preview-top { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-bottom: 17px; border-bottom: 1px solid rgba(255,255,255,.08); }
+    .server { display: flex; align-items: center; gap: 12px; }
+    .server-icon { width: 45px; height: 45px; border-radius: 15px; display: grid; place-items: center; background: linear-gradient(145deg,#d7ad63,#80572b); color: #15100a; font-size: 23px; }
+    .server strong { display: block; font-size: 13px; letter-spacing: .1em; }
+    .server small, .preview small { color: var(--muted); font-size: 11px; }
+    .live { color: #7be0b0; font-size: 11px; font-weight: 800; letter-spacing: .08em; }
+    .stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin-top: 17px; }
+    .stat { padding: 14px; border-radius: 14px; background: rgba(255,255,255,.035); border: 1px solid rgba(255,255,255,.06); }
+    .stat b { display: block; font-size: 23px; color: var(--gold-bright); }
+    .stat span { color: var(--muted); font-size: 10px; text-transform: uppercase; letter-spacing: .13em; }
+    .preview-bottom { display: flex; justify-content: space-between; align-items: center; gap: 15px; margin-top: 17px; }
+    .weather { color: #d8e7f5; font-size: 12px; }
+    .clock { font-variant-numeric: tabular-nums; color: var(--gold-bright); font-weight: 800; letter-spacing: .08em; }
+    section { padding: 78px 0; }
+    .section-head { text-align: center; max-width: 650px; margin: 0 auto 38px; }
+    .kicker { color: var(--blue); font-size: 10px; font-weight: 850; letter-spacing: .2em; text-transform: uppercase; }
+    h2 { margin: 10px 0 12px; font-size: clamp(29px, 4vw, 43px); letter-spacing: -.035em; line-height: 1.1; }
+    .section-head p { color: var(--muted); margin: 0; font-size: 15px; }
+    .features { display: grid; grid-template-columns: repeat(3,1fr); gap: 15px; }
+    .feature {
+      padding: 23px; min-height: 190px; border-radius: var(--radius); background: var(--panel);
+      border: 1px solid rgba(255,255,255,.075); box-shadow: inset 0 1px rgba(255,255,255,.035); transition: .22s ease;
+    }
+    .feature:hover { transform: translateY(-5px); border-color: rgba(83,186,255,.35); background: rgba(18,31,49,.92); }
+    .feature-icon { width: 43px; height: 43px; display: grid; place-items: center; border-radius: 13px; margin-bottom: 18px; color: var(--gold-bright); background: rgba(215,173,99,.10); border: 1px solid rgba(215,173,99,.18); font-size: 20px; }
+    .feature h3 { margin: 0 0 7px; font-size: 16px; }
+    .feature p { margin: 0; color: var(--muted); font-size: 13px; }
+    .showcase {
+      display: grid; grid-template-columns: 1fr 1fr; align-items: center; gap: 40px;
+      padding: 34px; border: 1px solid var(--line); border-radius: 28px;
+      background: linear-gradient(130deg, rgba(19,31,48,.9), rgba(10,16,27,.86));
+    }
+    .showcase h2 { margin-top: 9px; }
+    .showcase p { color: var(--muted); font-size: 14px; }
+    .showcase ul { padding: 0; list-style: none; display: grid; gap: 10px; margin: 22px 0 0; }
+    .showcase li { color: #dbe4ee; font-size: 13px; }
+    .showcase li::before { content: "✦"; color: var(--gold); margin-right: 10px; }
+    .visual-card { padding: 20px; border-radius: 20px; border: 1px solid rgba(83,186,255,.22); background: rgba(4,10,19,.65); }
+    .visual-line { height: 9px; border-radius: 10px; margin: 12px 0; background: linear-gradient(90deg, rgba(83,186,255,.65), rgba(215,173,99,.55)); }
+    .visual-line:nth-child(2) { width: 82%; } .visual-line:nth-child(3) { width: 64%; }
+    .visual-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-top: 20px; }
+    .visual-grid span { height: 62px; border-radius: 10px; border: 1px solid rgba(215,173,99,.18); background: rgba(215,173,99,.06); }
+    .steps { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; counter-reset: step; }
+    .step { counter-increment: step; padding: 20px; border-radius: 18px; border: 1px solid rgba(255,255,255,.08); background: rgba(255,255,255,.025); }
+    .step::before { content: "0" counter(step); color: var(--gold); font-size: 12px; font-weight: 900; letter-spacing: .15em; }
+    .step h3 { font-size: 14px; margin: 13px 0 5px; }
+    .step p { color: var(--muted); font-size: 12px; margin: 0; }
+    .download { text-align: center; padding: 50px 25px; border-radius: 28px; border: 1px solid rgba(215,173,99,.28); background: radial-gradient(ellipse at 50% 0%, rgba(215,173,99,.12), transparent 60%), rgba(14,22,36,.8); }
+    .download p { color: var(--muted); max-width: 550px; margin: 0 auto 25px; }
+    footer { padding: 30px 0 38px; color: #778395; font-size: 11px; border-top: 1px solid rgba(255,255,255,.06); }
+    .footer-inner { display: flex; justify-content: space-between; align-items: center; gap: 15px; }
+    .footer-brand { color: var(--gold-bright); font-weight: 850; letter-spacing: .12em; }
+    @media (max-width: 760px) {
+      .nav-links { display: none; position: absolute; top: 76px; left: 0; right: 0; padding: 18px 22px 22px; background: #0b1220; border-bottom: 1px solid var(--line); flex-direction: column; align-items: stretch; gap: 17px; }
+      .nav-links.open { display: flex; } .nav-links .nav-cta { text-align: center; }
+      .menu-toggle { display: inline-flex; } .nav > .nav-cta { display: none; }
+      .hero { padding: 75px 0 60px; } .hero-art { margin-top: 48px; }
+      .features { grid-template-columns: repeat(2,1fr); } .showcase { grid-template-columns: 1fr; gap: 22px; padding: 24px; }
+      .steps { grid-template-columns: repeat(2,1fr); }
+    }
+    @media (max-width: 480px) {
+      .wrap { width: min(100% - 28px, var(--max)); }
+      .features { grid-template-columns: 1fr; } .feature { min-height: auto; }
+      .stats { gap: 7px; } .stat { padding: 10px 8px; } .stat b { font-size: 19px; }
+      .preview { padding: 15px; } .preview-bottom { align-items: flex-start; flex-direction: column; }
+      .steps { grid-template-columns: 1fr 1fr; } .footer-inner { flex-direction: column; text-align: center; }
+      .ornament { inset: -12px; }
+    }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; } }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="wrap nav">
+      <a class="brand" href="#home" aria-label="PluginPlus home"><span class="brand-mark">𓂀</span><span>PLUGINPLUS</span></a>
+      <nav class="nav-links" id="navLinks" aria-label="Main navigation">
+        <a href="#features">Features</a><a href="#customize">Customization</a><a href="#install">Installation</a>
+        <a class="nav-cta" href="#install">Get Started ↗</a>
+      </nav>
+      <a class="nav-cta" href="#install">Get Started ↗</a>
+      <button class="menu-toggle" id="menuToggle" aria-label="Toggle navigation" aria-expanded="false">☰</button>
+    </div>
+  </header>
+
+  <main id="home">
+    <section class="hero wrap">
+      <div class="eyebrow">A new era for your Discord</div>
+      <h1>Ancient Egypt.<br><span class="gold">Modern Discord.</span></h1>
+      <p>Meet PluginPlus — a customizable Egyptian-inspired header card that transforms your Discord member list into something legendary.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#install">Explore PluginPlus <span>↗</span></a>
+        <a class="btn btn-secondary" href="#features">Discover Features</a>
+      </div>
+      <div class="hero-art">
+        <div class="ornament"></div>
+        <div class="preview">
+          <div class="preview-top">
+            <div class="server">
+              <div class="server-icon">𓂀</div>
+              <div><strong>EGYIMPERIUM</strong><small># general-chat</small></div>
+            </div>
+            <span class="live">● LIVE</span>
+          </div>
+          <div class="stats">
+            <div class="stat"><b>1,284</b><span>Members</span></div>
+            <div class="stat"><b>386</b><span>Online</span></div>
+            <div class="stat"><b>898</b><span>Offline</span></div>
+          </div>
+          <div class="preview-bottom">
+            <span class="weather">☀ &nbsp; 24°C &nbsp; Clear skies</span>
+            <span class="clock" id="clock">08:42:16 PM</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="features">
+      <div class="wrap">
+        <div class="section-head"><div class="kicker">Power meets personalization</div><h2>Everything. Your Way.</h2><p>Build a look that feels truly yours, from the smallest detail to the entire experience.</p></div>
+        <div class="features">
+          <article class="feature"><div class="feature-icon">🏛️</div><h3>Smart Header Card</h3><p>Show your server identity, channel name, and live Members, Online, and Offline counters.</p></article>
+          <article class="feature"><div class="feature-icon">🕒</div><h3>Clock & Weather</h3><p>Choose a digital or analog clock, display the date, and add live temperature.</p></article>
+          <article class="feature"><div class="feature-icon">🖼️</div><h3>Dynamic Backgrounds</h3><p>Use images, GIFs, or videos with playback, zoom, and position controls.</p></article>
+          <article class="feature"><div class="feature-icon">✨</div><h3>Premium Effects</h3><p>Give your card depth with Liquid Glass, 3D icons, and elegant shine effects.</p></article>
+          <article class="feature"><div class="feature-icon">💠</div><h3>Custom PNG Frames</h3><p>Bring your own transparent frames for the card, icon, text, clock, and counters.</p></article>
+          <article class="feature"><div class="feature-icon">🎨</div><h3>Colors & Themes</h3><p>Fine-tune card colors and choose a light or dark settings window with adjustable opacity.</p></article>
+          <article class="feature"><div class="feature-icon">🖱️</div><h3>Mouse Editing Mode</h3><p>Drag, resize, and precisely adjust every element. Undo, redo, or reset whenever you want.</p></article>
+          <article class="feature"><div class="feature-icon">⚙️</div><h3>Flexible Settings</h3><p>Use a movable, resizable tabbed settings window to control your setup.</p></article>
+          <article class="feature"><div class="feature-icon">🔊</div><h3>Startup Sound</h3><p>Set your own audio file to play when Discord starts.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section id="customize">
+      <div class="wrap">
+        <div class="showcase">
+          <div>
+            <div class="kicker">Craft every detail</div>
+            <h2>Your vision.<br><span class="gold">Your empire.</span></h2>
+            <p>PluginPlus gives you the freedom to shape your header card exactly how you imagine it. Fine-tune positions, sizes, frames, colors, and effects — all from one place.</p>
+            <ul><li>Precise sizing for every text element</li><li>Drag-and-drop frame positioning</li><li>Undo, redo, and one-click reset</li><li>Your own images, GIFs, videos, and audio</li></ul>
+          </div>
+          <div class="visual-card" aria-label="Decorative customization preview">
+            <div style="display:flex;justify-content:space-between;color:#d7ad63;font-size:11px;font-weight:800;letter-spacing:.12em"><span>PLUGINPLUS EDITOR</span><span>● READY</span></div>
+            <div class="visual-line" style="width:95%;margin-top:24px"></div><div class="visual-line"></div><div class="visual-line"></div>
+            <div class="visual-grid"><span></span><span></span><span></span></div>
+            <div style="display:flex;gap:8px;margin-top:17px"><span style="height:7px;width:42%;border-radius:9px;background:#53baff;opacity:.7"></span><span style="height:7px;width:25%;border-radius:9px;background:#d7ad63;opacity:.7"></span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="install">
+      <div class="wrap">
+        <div class="section-head"><div class="kicker">Begin your journey</div><h2>Get Started in Minutes.</h2><p>Follow these steps to add PluginPlus to your BetterDiscord setup.</p></div>
+        <div class="steps">
+          <article class="step"><h3>Install BetterDiscord</h3><p>Get BetterDiscord from its official website.</p></article>
+          <article class="step"><h3>Download PluginPlus</h3><p>Download the <code>PluginPlus_plugin.js</code> file.</p></article>
+          <article class="step"><h3>Move the Plugin</h3><p>Place the file inside your BetterDiscord plugins folder.</p></article>
+          <article class="step"><h3>Enable & Customize</h3><p>Enable PluginPlus in Settings → Plugins and follow the first-run notice.</p></article>
+        </div>
+        <div class="download" style="margin-top:32px">
+          <div class="kicker">The next chapter starts here</div>
+          <h2>Make Your Discord Legendary.</h2>
+          <p>Ready to create a member list that stands out? Install BetterDiscord, add PluginPlus, and build your own Egyptian-inspired experience.</p>
+          <a class="btn btn-primary" href="https://betterdiscord.app" target="_blank" rel="noopener noreferrer">Visit BetterDiscord ↗</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer><div class="wrap footer-inner"><span class="footer-brand">𓂀 PLUGINPLUS</span><span>Unofficial BetterDiscord modification · Still in development</span><span>Use at your own risk.</span></div></footer>
+
+  <script>
+    const clock = document.getElementById('clock');
+    function updateClock() {
+      clock.textContent = new Intl.DateTimeFormat('en-US', {
+        hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true
+      }).format(new Date());
+    }
+    updateClock();
+    setInterval(updateClock, 1000);
+
+    const toggle = document.getElementById('menuToggle');
+    const nav = document.getElementById('navLinks');
+    toggle.addEventListener('click', () => {
+      const open = nav.classList.toggle('open');
+      toggle.setAttribute('aria-expanded', String(open));
+      toggle.textContent = open ? '✕' : '☰';
+    });
+    nav.querySelectorAll('a').forEach(link => link.addEventListener('click', () => {
+      nav.classList.remove('open');
+      toggle.setAttribute('aria-expanded', 'false');
+      toggle.textContent = '☰';
+    }));
+  </script>
+</body>
+</html>
