@@ -1,1 +1,10 @@
-
+{
+  "themes": [
+    {
+      "name": "Anubis Egyptian",
+      "file": "AnubisEgyptian_theme.css",
+      "version": "1.0",
+      "description": "Gold and sapphire Egyptian look for Discord."
+    }
+  ]
+}
