@@ -3,14 +3,16 @@
     {
       "name": "Anubis Egyptian",
       "file": "AnubisEgyptian.theme.css",
+      "preview": "AnubisEgyptian.jpg",
       "version": "1.0",
-      "description": "Gold and sapphire Egyptian look for Discord."
+      "description": "Gold and sapphire Egyptian"
     },
     {
       "name": "Ancient Egypt",
       "file": "AncientEgypt.theme.css",
+      "preview": "AncientEgypt.jpg",
       "version": "1.0",
-      "description": "Ancient Egypt look for Discord."
+      "description": "Ancient Egypt"
     }
   ]
 }
